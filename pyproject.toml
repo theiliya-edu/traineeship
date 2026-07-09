@@ -1,0 +1,79 @@
+# ==============================================================================
+# PROJECT CONFIGURATION
+# ==============================================================================
+
+[project]
+name = "traineeship"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+    "pyrefly>=1.1.1",
+    "ruff>=0.15.20",
+]
+idea = [
+    "pip>=26.1.2",
+]
+
+
+# ==============================================================================
+# TOOL: RUFF (Global Settings)
+# ==============================================================================
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+force-exclude = true
+
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "migrations",
+]
+
+
+# ------------------------------------------------------------------------------
+# Linter Settings (ruff check)
+# ------------------------------------------------------------------------------
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "C4",
+    "T10",
+    "SIM",
+    "RUF",
+]
+
+
+# ------------------------------------------------------------------------------
+# Formatter Settings (ruff format)
+# ------------------------------------------------------------------------------
+
+[tool.ruff.format]
+line-ending = "lf"
+nested-string-quote-style = "preferred"
+
+
+# ==============================================================================
+# TOOL: PYREFLY (Global Settings)
+# ==============================================================================
+
+[tool.pyrefly]
+project-includes = ["app"]
+search-path = ["app"]
+site-package-path = [".venv/lib/python3.12/site-packages"]
+
+preset = "all"
+infer-return-types = "never"
