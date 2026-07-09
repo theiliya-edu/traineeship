@@ -1,0 +1,79 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: fastapi-app-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${SHARED__DB__EXTERNAL_PORT}:5432"
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${SHARED__DB__USER}
+      POSTGRES_PASSWORD: ${SHARED__DB__PASSWORD}
+      POSTGRES_DB: ${SHARED__DB__NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  redis:
+    image: redis:8
+    container_name: fastapi-app-redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${SPIMEX_API__REDIS__EXTERNAL_PORT}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    container_name: fastapi-app-api
+    ports:
+      - "${SPIMEX_API__APP__EXTERNAL_PORT}:8000"
+    env_file: .env
+    environment:
+      SHARED__DB__HOST: postgres
+      SHARED__REDIS__HOST: redis
+    command: >
+      sh -c "uv run alembic upgrade head &&
+             uv run uvicorn app.spimex_api.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  parser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: parser
+    container_name: fastapi-app-parser
+    env_file: .env
+    environment:
+      SHARED__DB__HOST: postgres
+      SHARED__REDIS__HOST: redis
+    restart: "no"
+    command: >
+      sh -c "PYTHONPATH=app uv run python -m spimex_parser.main"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+
+volumes:
+  postgres_data:
+  redis_data:
