@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: spimex-parser-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB__EXTERNAL_PORT}:5432"
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB__USER}
+      POSTGRES_PASSWORD: ${DB__PASSWORD}
+      POSTGRES_DB: ${DB__NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+
+volumes:
+  postgres_data:
