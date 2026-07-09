@@ -6,7 +6,9 @@
 name = "traineeship"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "sqlalchemy>=2.0.51",
+]
 
 [dependency-groups]
 dev = [
@@ -72,6 +74,7 @@ nested-string-quote-style = "preferred"
 
 [tool.pyrefly]
 project-includes = ["app"]
+project-excludes = ["app/models/**"]
 search-path = ["app"]
 site-package-path = [".venv/lib/python3.12/site-packages"]
 
