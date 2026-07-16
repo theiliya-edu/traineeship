@@ -24,9 +24,15 @@ dependencies = [
 [dependency-groups]
 dev = [
     "alembic>=1.18.5",
+    "factory-boy>=3.3.1",
+    "httpx>=0.28.1",
     "pre-commit>=4.6.0",
     "pyrefly>=1.1.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=0.26.0",
+    "pytest-dotenv>=0.5.2",
     "ruff>=0.15.20",
+    "testcontainers[postgres]>=4.14.2",
     "types-tqdm>=4.68.0.20260608",
     "types-xlrd>=2.0.0.20260518",
 ]
@@ -102,3 +108,17 @@ site-package-path = [".venv/lib/python3.12/site-packages"]
 
 preset = "all"
 infer-return-types = "never"
+
+
+# ==============================================================================
+# TOOL: PYTEST (Global Settings)
+# ==============================================================================
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+env_files = "tests/.env.test"
+env_override_existing_values = true
+pythonpath = ["app", "tests"]
